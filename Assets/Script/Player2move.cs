@@ -12,23 +12,41 @@ public class Player2move : MonoBehaviour
 
 
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] private int moveSpeed;
     [SerializeField] private int jumpForce;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] Animator animator;
+    public FixedJoystick joystick;
+
+    [SerializeField]
+    float SPEED = 1.0f;
+    private Vector2 inputAxis;
+
 
     public Text GameOver;
     public Text GameClear;
 
+
+
     private bool IsJumping = false;
+
+    void Start()
+    {
+        // オブジェクトに設定しているRigidbody2Dの参照を取得する
+        this.rb = GetComponent<Rigidbody2D>();
+        
+    }
 
     void Update()
     {
+        inputAxis.x = joystick.Horizontal;
+        // 速度を代入する
+        rb.velocity = inputAxis.normalized * SPEED;
+
         if (Input.GetKeyDown("space") && !IsJumping)
         {
             Jump();
         }
-        //rigidbodyで新しく取得し、Vector2(x, y)
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * moveSpeed, rb.velocity.y);
+   
     }
 
     public void Jump()
@@ -37,6 +55,8 @@ public class Player2move : MonoBehaviour
         //ForceMode2D.Impulseを引数に与えると瞬間的に力を加えます
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }
+
+   
 
     //On~Enter2Dは〜にぶつかった処理を実行する
     void OnCollisionEnter2D(Collision2D collision)
